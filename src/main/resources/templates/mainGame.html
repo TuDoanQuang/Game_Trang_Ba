@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head>
+      <meta charset="UTF-8" />
+      <title>Main</title>
+      <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+   </head>
+   <body>
+      <h1 class="center" >Game</h1>
+      <div>
+        <form th:action="@{/mainGame}" method="POST">
+        	<table border="1" class="center" style="margin-bottom: 50px;">
+        		<tr>
+        			<th bgcolor="red">Player 1 - Quân đỏ</th>
+        			<th bgcolor="blue">Player 2 - Quân xanh</th>
+        		</tr>
+				<tr>
+        			<td>còn <span th:utext="${gameForm.counterPlayer1}"></span>   quân</td>
+        			<td>còn <span th:utext="${gameForm.counterPlayer2}"></span>   quân</td>
+        		</tr>
+        		<tr>
+        			<td>ăn <span th:utext="${gameForm.numberEatPlay1}"></span>   quân</td>
+        			<td>ăn <span th:utext="${gameForm.numberEatPlay2}"></span>   quân</td>
+        		</tr>
+        	</table>
+        	
+        	 <div th:if="${gameForm.gameMessage}" th:utext="${gameForm.gameMessage}"
+	         style="color:red;font-style:italic;">
+	         ...
+	      	</div>
+        	
+	         <table border="0" class="center">
+				<tr>
+					<td>
+						<input type="submit" value="A1" name="a1" 
+						th:class="${gameForm.a1 == null || gameForm.a1 == 'PLAYER1_EAT' || gameForm.a1 == 'PLAYER2_EAT'? '' : (gameForm.a1 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}">
+					</td></td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="A2" name="a2" 
+					th:class="${gameForm.a2 == null || gameForm.a2 == 'PLAYER1_EAT' || gameForm.a2 == 'PLAYER2_EAT'? '' : (gameForm.a2 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="A3" name="a3" 
+					th:class="${gameForm.a3 == null || gameForm.a3 == 'PLAYER1_EAT' || gameForm.a3 == 'PLAYER2_EAT'? '' : (gameForm.a3 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+				</tr>
+				<tr style="height: 30px">
+					<td colspan="7">l</td>
+					<td>l</td>
+					<td colspan="6"></td>
+					<td>l</td>
+				</tr>
+				<tr>
+					<td colspan="3">l</td>
+					<td>
+						<input type="submit" value="B1" name="b1" 
+						th:class="${(gameForm.b1 == null || gameForm.b1 == 'PLAYER1_EAT' || gameForm.b1 == 'PLAYER2_EAT') ? '' : (gameForm.b1 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/>
+					</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="B2" name="b2" 
+					th:class="${gameForm.b2 == null || gameForm.b2 == 'PLAYER1_EAT' || gameForm.b2 == 'PLAYER2_EAT'? '' : (gameForm.b2 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="B3" name="b3" 
+					th:class="${gameForm.b3 == null || gameForm.b3 == 'PLAYER1_EAT' || gameForm.b3 == 'PLAYER2_EAT'? '' : (gameForm.b3 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td colspan="2"></td>
+					<td>l</td>
+				</tr>
+				<tr style="height: 30px">
+					<td colspan="3">l</td>
+					<td colspan="4">l</td>
+					<td>l</td>
+					<td colspan="3"></td>
+					<td colspan="3">l</td>
+					<td>l</td>
+				</tr>
+				<tr>
+					<td colspan="3">l</td>
+					<td colspan="2">l</td>
+					<td><input type="submit" value="C1" name="c1" 
+					th:class="${gameForm.c1 == null || gameForm.c1 == 'PLAYER1_EAT' || gameForm.c1 == 'PLAYER2_EAT' ? '' : (gameForm.c1 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td><input type="submit" value="C2" name="c2" 
+					th:class="${gameForm.c2 == null || gameForm.c2 == 'PLAYER1_EAT' || gameForm.c2 == 'PLAYER2_EAT' ? '' : (gameForm.c2 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td><input type="submit" value="C3" name="c3" 
+					th:class="${gameForm.c3 == null || gameForm.c3 == 'PLAYER1_EAT' || gameForm.c3 == 'PLAYER2_EAT' ? '' : (gameForm.c3 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td colspan="1"></td>
+					<td colspan="3">l</td>
+					<td>l</td>
+				</tr>
+				<tr style="height: 30px">
+					<td colspan="3">l</td>
+					<td colspan="2">l</td>
+					<td colspan="4">l</td>
+					<td colspan="2">l</td>
+					<td colspan="3">l</td>
+					<td>l</td>
+				</tr>
+				<tr>
+					<td><input type="submit" value="A8" name="a8" 
+					th:class="${gameForm.a8 == null || gameForm.a8 == 'PLAYER1_EAT' || gameForm.a8 == 'PLAYER2_EAT' ? '' : (gameForm.a8 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="B8" name="b8" 
+					th:class="${gameForm.b8 == null || gameForm.b8 == 'PLAYER1_EAT' || gameForm.b8 == 'PLAYER2_EAT' ? '' : (gameForm.b8 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td><input type="submit" value="C8" name="c8" 
+					th:class="${gameForm.c8 == null || gameForm.c8 == 'PLAYER1_EAT' || gameForm.c8 == 'PLAYER2_EAT' ? '' : (gameForm.c8 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td colspan="3"></td>
+					<td><input type="submit" value="C4" name="c4" 
+					th:class="${gameForm.c4 == null || gameForm.c4 == 'PLAYER1_EAT' || gameForm.c4 == 'PLAYER2_EAT' ? '' : (gameForm.c4 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td><input type="submit" value="B4" name="b4" 
+					th:class="${gameForm.b4 == null || gameForm.b4 == 'PLAYER1_EAT' || gameForm.b4 == 'PLAYER2_EAT' ? '' : (gameForm.b4 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="A4" name="a4" 
+					th:class="${gameForm.a4 == null || gameForm.a4 == 'PLAYER1_EAT' || gameForm.a4 == 'PLAYER2_EAT' ? '' : (gameForm.a4 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+				</tr>
+				<tr style="height: 30px">
+					<td colspan="3">l</td>
+					<td colspan="2">l</td>
+					<td colspan="4">l</td>
+					<td colspan="2">l</td>
+					<td colspan="3">l</td>
+					<td>l</td>
+				</tr>
+				<tr>
+					<td colspan="3">l</td>
+					<td colspan="2">l</td>
+					<td><input type="submit" value="C7" name="c7" th:class="${gameForm.c7 == null ? '' : (gameForm.c7 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td><input type="submit" value="C6" name="c6" th:class="${gameForm.c6 == null ? '' : (gameForm.c6 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td><input type="submit" value="C5" name="c5" th:class="${gameForm.c5 == null ? '' : (gameForm.c5 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td colspan="1"></td>
+					<td colspan="3">l</td>
+					<td>l</td>
+				</tr>
+				<tr style="height: 30px">
+					<td colspan="3">l</td>
+					<td colspan="4">l</td>
+					<td>l</td>
+					<td colspan="3"></td>
+					<td colspan="3">l</td>
+					<td>l</td>
+				</tr>
+				<tr>
+					<td colspan="3">l</td>
+					<td><input type="submit" value="B7" name="b7" th:class="${gameForm.b7 == null ? '' : (gameForm.b7 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="B6" name="b6" th:class="${gameForm.b6 == null ? '' : (gameForm.b6 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="B5" name="b5" th:class="${gameForm.b5 == null ? '' : (gameForm.b5 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td colspan="2"></td>
+					<td>l</td>
+				</tr>
+				<tr style="height: 30px">
+					<td colspan="7">l</td>
+					<td>l</td>
+					<td colspan="6"></td>
+					<td>l</td>
+				</tr>
+				<tr>
+					<td><input type="submit" value="A7" name="a7" th:class="${gameForm.a7 == null ? '' : (gameForm.a7 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="A6" name="a6" th:class="${gameForm.a6 == null ? '' : (gameForm.a6 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td>-------</td>
+					<td><input type="submit" value="A5" name="a5" th:class="${gameForm.a5 == null ? '' : (gameForm.a5 == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+				</tr>
+	         </table>
+	         
+	         <style>
+	         	.player1-selected {
+					background-color: red;
+				}
+				
+				.player2-selected {
+					background-color: blue;
+				}
+				
+				.lost {
+					background-color: gray;
+				}
+	         
+	         .center {
+				  margin-left: auto;
+				  margin-right: auto;
+				}
+	         </style>
+         </form>
+      </div>
+   </body>
+</html>
