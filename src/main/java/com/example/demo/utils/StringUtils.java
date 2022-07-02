@@ -1,5 +1,7 @@
 package com.example.demo.utils;
 
+import com.example.demo.enums.PointStatus;
+
 public class StringUtils {
 
 	public static boolean isNotEmpty(String value) {
@@ -23,6 +25,8 @@ public class StringUtils {
 		return true;
 	}
 	
+	
+	
 	public static boolean isAllEqual(String ...values ) {
 
 		if (!isAllNotEmpty(values)) {
@@ -36,4 +40,19 @@ public class StringUtils {
 		}
 		return true;
 	}
+	
+	public static boolean isEnumsEqual(PointStatus ...values ) {
+		if (values == null || values.length == 0) {
+			return false;
+		}
+		PointStatus comPareEnum = values[0];
+		for (PointStatus value : values) {
+			if (value == null || comPareEnum != value) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 }

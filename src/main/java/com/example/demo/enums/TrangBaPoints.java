@@ -21,5 +21,4 @@ public enum TrangBaPoints {
 	A6_B6_C6,
 	A8_B8_C8
 	
-	// test git
 }
