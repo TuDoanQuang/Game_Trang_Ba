@@ -1,7 +1,6 @@
 package com.example.demo.utils;
 
 import com.example.demo.enums.PointName;
-import com.example.demo.enums.PointStatus;
 import com.example.demo.form.GameForm;
 
 public class GameUtils {
@@ -159,15 +158,8 @@ public class GameUtils {
 		
 		return false;
 	}
-	public static String getPlayerOnGame(PointStatus nextPlayer) {
-		if (nextPlayer == null) {
-			return "";
-		}
-
-		return PointStatus.PLAYER1 == nextPlayer ? PointStatus.PLAYER2.name() :  PointStatus.PLAYER1.name();
-	}
 	
-	public static boolean updatePointSelected(GameForm gameForm, String pointSelection, boolean waitForEat, String valueChange) {
+	public static boolean isPointSelectedValid(GameForm gameForm, String pointSelection, boolean waitForEat, String valueChange) {
 		
 		if (StringUtils.isNotEmpty(pointSelection)) {
 			if (gameForm.getPointMap().get(PointName.valueOf(pointSelection)) == null || waitForEat) {
@@ -180,10 +172,36 @@ public class GameUtils {
 		return false;
 	}
 	
-	public static boolean isValidSelectPointToMove(GameForm gameForm, String pointSelection, String player) {
+	public static boolean isValidSelectPointToMove(GameForm gameForm, String pointSelection) {
 		if (gameForm.getPointMap().get(PointName.valueOf(pointSelection)) != null 
-				&& gameForm.getPointMap().get(PointName.valueOf(pointSelection)).equals(player)) {
+				&& gameForm.getPointMap().get(PointName.valueOf(pointSelection)).equals(gameForm.getCurrentPlayer().name())) {
 			return true;
+		}
+		
+		return false;
+	}
+
+	public static boolean isDestinationValid(GameForm gameForm, String pointWaitingToMove, String pointSelection) {
+		// Point selected already selected before
+		if (gameForm.getPointMap().get(PointName.valueOf(pointSelection)) != null) {
+			return false;
+		}
+		
+		String roundMoving = pointWaitingToMove.substring(0, 1);
+		
+		int pointNumerMoving = Integer.valueOf(pointWaitingToMove.substring(1));
+		int pointNumerSelected = Integer.valueOf(pointSelection.substring(1));
+		// If point selected is same round with the waiting point
+		if (pointSelection.contains(roundMoving)) {
+			if (pointNumerMoving == (pointNumerSelected - 1) || pointNumerMoving == (pointNumerSelected + 1)
+					|| pointNumerMoving == (pointNumerSelected - 7) || pointNumerMoving == (pointNumerSelected + 7)) {
+				return true;
+			}
+		} else {
+			if (pointNumerMoving == pointNumerSelected 
+					&& (pointNumerMoving == 2 || pointNumerMoving == 4|| pointNumerMoving == 6|| pointNumerMoving == 8)) {
+				return true;
+			}
 		}
 		
 		return false;

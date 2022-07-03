@@ -22,7 +22,9 @@
         			<td>ăn <span th:utext="${gameForm.numberEatPlay2}"></span>   quân</td>
         		</tr>
         	</table>
-        	
+        	Lượt của <span th:if="${gameForm.currentPlayer}" th:utext="${gameForm.currentPlayer}">
+	         ...
+	      	</span>
         	 <div th:if="${gameForm.gameMessage}" th:utext="${gameForm.gameMessage}"
 	         style="color:red;font-style:italic;">
 	         ...
@@ -32,7 +34,7 @@
 				<tr>
 					<td>
 						<input type="submit" value="A1" name="a1" 
-						th:class="${gameForm.pointMap[A1] == null || gameForm.pointMap[A1] == 'PLAYER1_EAT' || gameForm.pointMap[A1] == 'PLAYER2_EAT'? '' : (gameForm.pointMap[A1] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}">
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A1])}">
 					</td></td>
 					<td>-------</td>
 					<td>-------</td>
@@ -42,7 +44,7 @@
 					<td>-------</td>
 					<td>
 						<input type="submit" value="A2" name="a2" 
-						th:class="${gameForm.pointMap[A2] == null || gameForm.pointMap[A2] == 'PLAYER1_EAT' || gameForm.pointMap[A2] == 'PLAYER2_EAT'? '' : (gameForm.pointMap[A2] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A2])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
@@ -51,7 +53,7 @@
 					<td>-------</td>
 					<td>
 						<input type="submit" value="A3" name="a3" 
-						th:class="${gameForm.pointMap[A3] == null || gameForm.pointMap[A3] == 'PLAYER1_EAT' || gameForm.pointMap[A3] == 'PLAYER2_EAT'? '' : (gameForm.pointMap[A3] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A3])}"/></td>
 				</tr>
 				<tr style="height: 30px">
 					<td colspan="7">l</td>
@@ -63,20 +65,20 @@
 					<td colspan="3">l</td>
 					<td>
 						<input type="submit" value="B1" name="b1" 
-						th:class="${(gameForm.pointMap[B1] == null || gameForm.pointMap[B1] == 'PLAYER1_EAT' || gameForm.pointMap[B1] == 'PLAYER2_EAT') ? '' : (gameForm.pointMap[B1] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B1])}"/>
 					</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>
 						<input type="submit" value="B2" name="b2" 
-						th:class="${gameForm.pointMap[B2] == null || gameForm.pointMap[B2] == 'PLAYER1_EAT' || gameForm.pointMap[B2] == 'PLAYER2_EAT'? '' : (gameForm.pointMap[B2] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B2])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>
 						<input type="submit" value="B3" name="b3" 
-						th:class="${gameForm.pointMap[B3] == null || gameForm.pointMap[B3] == 'PLAYER1_EAT' || gameForm.pointMap[B3] == 'PLAYER2_EAT'? '' : (gameForm.pointMap[B3] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B3])}"/></td>
 					<td colspan="2"></td>
 					<td>l</td>
 				</tr>
@@ -93,15 +95,15 @@
 					<td colspan="2">l</td>
 					<td>
 						<input type="submit" value="C1" name="c1" 
-						th:class="${gameForm.pointMap[C1] == null || gameForm.pointMap[C1] == 'PLAYER1_EAT' || gameForm.pointMap[C1] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[C1] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C1])}"/></td>
 					<td>-------</td>
 					<td>
 						<input type="submit" value="C2" name="c2" 
-						th:class="${gameForm.pointMap[C2] == null || gameForm.pointMap[C2] == 'PLAYER1_EAT' || gameForm.pointMap[C2] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[C2] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C2])}"/></td>
 					<td>-------</td>
 					<td>
 						<input type="submit" value="C3" name="c3" 
-						th:class="${gameForm.pointMap[C3] == null || gameForm.pointMap[C3] == 'PLAYER1_EAT' || gameForm.pointMap[C3] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[C3] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C3])}"/></td>
 					<td colspan="1"></td>
 					<td colspan="3">l</td>
 					<td>l</td>
@@ -117,29 +119,29 @@
 				<tr>
 					<td>
 						<input type="submit" value="A8" name="a8" 
-						th:class="${gameForm.pointMap[A8] == null || gameForm.pointMap[A8] == 'PLAYER1_EAT' || gameForm.pointMap[A8] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[A8] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A8])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>
 						<input type="submit" value="B8" name="b8" 
-						th:class="${gameForm.pointMap[B8] == null || gameForm.pointMap[B8] == 'PLAYER1_EAT' || gameForm.pointMap[B8] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[B8] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B8])}"/></td>
 					<td>-------</td>
 					<td>
 						<input type="submit" value="C8" name="c8" 
-						th:class="${gameForm.pointMap[C8] == null || gameForm.pointMap[C8] == 'PLAYER1_EAT' || gameForm.pointMap[C8] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[C8] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C8])}"/></td>
 					<td colspan="3"></td>
 					<td>
 						<input type="submit" value="C4" name="c4" 
-						th:class="${gameForm.pointMap[C4] == null || gameForm.pointMap[C4] == 'PLAYER1_EAT' || gameForm.pointMap[C4] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[C4] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C4])}"/></td>
 					<td>-------</td>
 					<td>
 						<input type="submit" value="B4" name="b4" 
-						th:class="${gameForm.pointMap[B4] == null || gameForm.pointMap[B4] == 'PLAYER1_EAT' || gameForm.pointMap[B4] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[B4] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B4])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>
 						<input type="submit" value="A4" name="a4" 
-						th:class="${gameForm.pointMap[A4] == null || gameForm.pointMap[A4] == 'PLAYER1_EAT' || gameForm.pointMap[A4] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[A4] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A4])}"/></td>
 				</tr>
 				<tr style="height: 30px">
 					<td colspan="3">l</td>
@@ -154,14 +156,14 @@
 					<td colspan="2">l</td>
 					<td>
 						<input type="submit" value="C7" name="c7" 
-						th:class="${gameForm.pointMap[C7] == null || gameForm.pointMap[C7] == 'PLAYER1_EAT' || gameForm.pointMap[C7] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[C7] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C7])}"/></td>
 					<td>-------</td>
 					<td>
 						<input type="submit" value="C6" name="c6" 
-						th:class="${gameForm.pointMap[C6] == null || gameForm.pointMap[C6] == 'PLAYER1_EAT' || gameForm.pointMap[C6] == 'PLAYER2_EAT'  ? '' : (gameForm.pointMap[C6] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C6])}"/></td>
 					<td>-------</td>
 					<td><input type="submit" value="C5" name="c5" 
-					th:class="${gameForm.pointMap[C5] == null || gameForm.pointMap[C5] == 'PLAYER1_EAT' || gameForm.pointMap[C5] == 'PLAYER2_EAT'  ? '' : (gameForm.pointMap[C5] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C5])}"/></td>
 					<td colspan="1"></td>
 					<td colspan="3">l</td>
 					<td>l</td>
@@ -177,17 +179,17 @@
 				<tr>
 					<td colspan="3">l</td>
 					<td><input type="submit" value="B7" name="b7" 
-					th:class="${gameForm.pointMap[B7] == null || gameForm.pointMap[B7] == 'PLAYER1_EAT' || gameForm.pointMap[B7] == 'PLAYER2_EAT'  ? '' : (gameForm.pointMap[B7] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B7])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td><input type="submit" value="B6" name="b6" 
-					th:class="${gameForm.pointMap[B6] == null  || gameForm.pointMap[B6] == 'PLAYER1_EAT' || gameForm.pointMap[B6] == 'PLAYER2_EAT' ? '' : (gameForm.pointMap[B6] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B6])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td><input type="submit" value="B5" name="b5" 
-					th:class="${gameForm.pointMap[B5] == null || gameForm.pointMap[B5] == 'PLAYER1_EAT' || gameForm.pointMap[B5] == 'PLAYER2_EAT'  ? '' : (gameForm.pointMap[B5] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B5])}"/></td>
 					<td colspan="2"></td>
 					<td>l</td>
 				</tr>
@@ -198,21 +200,24 @@
 					<td>l</td>
 				</tr>
 				<tr>
-					<td><input type="submit" value="A7" name="a7" th:class="${gameForm.pointMap[A7] == null ? '' : (gameForm.pointMap[A7] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td><input type="submit" value="A7" name="a7"
+					 th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A7])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
-					<td><input type="submit" value="A6" name="a6" th:class="${gameForm.pointMap[A6] == null ? '' : (gameForm.pointMap[A6] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td><input type="submit" value="A6" name="a6" 
+					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A6])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
-					<td><input type="submit" value="A5" name="a5" th:class="${gameForm.pointMap[A5] == null ? '' : (gameForm.pointMap[A5] == 'PLAYER1' ? 'player1-selected' : 'player2-selected')}"/></td>
+					<td><input type="submit" value="A5" name="a5" 
+					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A5])}"/></td>
 				</tr>
 	         </table>
 	         
@@ -223,6 +228,10 @@
 				
 				.player2-selected {
 					background-color: blue;
+				}
+				
+				.wait_moving {
+					background-color: yellow;
 				}
 				
 				.lost {
