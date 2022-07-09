@@ -11,13 +11,13 @@ import com.example.demo.utils.StringUtils;
 
 public class GameForm {
 
-	private final int counter = 4;
-//	private PointStatus nextPlayer;
+	// the law fix value is 9
+	public final int COUNTER = 9;
 	private GameStatus gameStatus;
 	private PointStatus currentPlayer;
 	private String pointSelected;
-	private int counterPlayer1 = counter;
-	private int counterPlayer2 = counter;
+	private int counterPlayer1 = COUNTER;
+	private int counterPlayer2 = COUNTER;
 	private int numberEatPlay1 = 0;
 	private int numberEatPlay2 = 0;
 	private String gameMessage;

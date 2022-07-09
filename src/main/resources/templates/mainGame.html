@@ -6,6 +6,18 @@
       <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
    </head>
    <body>
+   
+   <script th:inline="javascript">
+   		var gameStatus = [[${gameForm.gameStatus}]];
+   		if (gameStatus == "FINISH") {
+			if (confirm([[${gameForm.gameMessage}]] + "\nChơi ván mới?")) {
+			   window.location.href = "../mainGame";
+			  } else {
+			    txt = "You pressed Cancel!";
+			  }
+		}
+   </script>
+   	<a th:href="@{/mainGame}">Chơi lại</a>
       <div>
         <form th:action="@{/mainGame}" method="POST">
         	<table border="1" class="center" style="margin-bottom: 50px;">
@@ -14,7 +26,7 @@
         			<th bgcolor="blue">Player 2 - Quân xanh</th>
         		</tr>
 				<tr>
-        			<td>còn <span th:utext="${gameForm.counterPlayer1}"></span>   quân</td>
+        			<td>còn <span th:if="${gameForm.counterPlayer1}" th:utext="${gameForm.counterPlayer1}"></span>   quân</td>
         			<td>còn <span th:utext="${gameForm.counterPlayer2}"></span>   quân</td>
         		</tr>
         		<tr>
@@ -22,18 +34,19 @@
         			<td>ăn <span th:utext="${gameForm.numberEatPlay2}"></span>   quân</td>
         		</tr>
         	</table>
-        	Lượt của <span th:if="${gameForm.currentPlayer}" th:utext="${gameForm.currentPlayer}">
+        	
+        	 <span th:if="${gameForm.currentPlayer}" th:utext="${gameForm.gameStatus != 'FINISH' ? 'Lượt của ' + gameForm.currentPlayer : ''}"
+        	style="color:red;font-style:italic;">
 	         ...
 	      	</span>
         	 <div th:if="${gameForm.gameMessage}" th:utext="${gameForm.gameMessage}"
 	         style="color:red;font-style:italic;">
 	         ...
 	      	</div>
-	      	
 	         <table border="0" class="center">
 				<tr>
 					<td>
-						<input type="submit" value="A1" name="a1" 
+						<input type="submit" value="A1" name="a1"
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A1])}">
 					</td></td>
 					<td>-------</td>
@@ -220,7 +233,6 @@
 					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A5])}"/></td>
 				</tr>
 	         </table>
-	         
 	         <style>
 	         	.player1-selected {
 					background-color: red;
@@ -236,6 +248,10 @@
 				
 				.lost {
 					background-color: gray;
+				}
+				
+				.none-display {
+					display: none;
 				}
 	         
 	         .center {

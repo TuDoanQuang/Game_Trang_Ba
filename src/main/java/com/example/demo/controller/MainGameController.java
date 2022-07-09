@@ -20,15 +20,12 @@ import com.example.demo.utils.StringUtils;
 @Controller
 public class MainGameController {
 
-
-	public GameForm gameForm = new GameForm();
-	public final static String redirectToMainGame = "redirect:/mainGame";
+	public GameForm gameForm  ;
+	private final static String redirectToMainGame = "mainGame";
 	
 	private void excuteGame(Model model, String pointSelection) {
+		
 		this.gameForm.setPointSelected(pointSelection);
-		if (gameForm.getGameStatus() == null) {
-			gameForm.setGameStatus(GameStatus.ON_GOING);
-		}
 		
 		// out of 9 items
 		if (this.gameForm.getCounterPlayer1() > 0 || this.gameForm.getCounterPlayer2() > 0) {
@@ -37,23 +34,20 @@ public class MainGameController {
 					boolean isValidPoint = GameUtils.isPointSelectedValid(this.gameForm, pointSelection, false, this.gameForm.getCurrentPlayer().name());
 					
 					if (isValidPoint) {
-						if (isPlayerCanEatOne(gameForm)) {
+						if (GameUtils.isPlayerCanEatOne(this.gameForm)) {
 							this.gameForm.setGameMessage(this.gameForm.getCurrentPlayer().name() + " ăn 1 quân, chọn lấy 1 quân của đối phương");
 							gameForm.setGameStatus(GameStatus.WAIT_FOR_EATING);
-							return;
+							break;
 						} 
 						
-						// assign to the next player
 						assignToNextPlayer();
 					} else {
 						this.gameForm.setGameMessage("Không hợp lệ, xin chọn điểm khác!!!");
 					}
 					
 					break;
-				
 				case WAIT_FOR_EATING: 
 					doEating();
-					
 					break;
 				default:
 					break;
@@ -81,6 +75,12 @@ public class MainGameController {
 					break;
 				case WAIT_FOR_EATING:
 					doEating();
+
+					String playerWin = getPlayerWin();
+					if (StringUtils.isNotEmpty(playerWin)) {
+						this.gameForm.setGameStatus(GameStatus.FINISH);
+						this.gameForm.setGameMessage(playerWin + " thắng! Kết thúc game!");
+					}
 					break;
 				case WAIT_FOR_MOVING:
 					PointName pointWaitingToMove = gameForm.getPointMap().entrySet().stream()
@@ -88,11 +88,25 @@ public class MainGameController {
 							|| x.getValue().equals(PointStatus.WAIT_PLAYER2_MOVE.name()))))
 					.map(Map.Entry::getKey).findFirst().orElse(null);
 					
+					// Player select another his point
+					if (gameForm.getPointMap().get(PointName.valueOf(pointSelection)) != null && pointWaitingToMove != null
+							&& pointWaitingToMove != PointName.valueOf(pointSelection)
+							&& this.gameForm.getPointMap().get(pointWaitingToMove).contains(gameForm.getPointMap().get(PointName.valueOf(pointSelection)))) {
+						if (gameForm.getCurrentPlayer() == PointStatus.PLAYER1) {
+							this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER1_MOVE.name());
+						} else {
+							this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER2_MOVE.name());
+						}
+						this.gameForm.getPointMap().put(pointWaitingToMove, gameForm.getCurrentPlayer().name());
+						
+						break;
+					}
+					
 					if (GameUtils.isDestinationValid(gameForm, pointWaitingToMove.name(), pointSelection)) {
 						this.gameForm.getPointMap().put(pointWaitingToMove, null);
 						this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), this.gameForm.getCurrentPlayer().name());
 						removeTrangBa();
-						if (isPlayerCanEatOne(gameForm)) {
+						if (GameUtils.isPlayerCanEatOne(gameForm)) {
 							this.gameForm.setGameMessage(this.gameForm.getCurrentPlayer().name() + " ăn 1 quân, chọn lấy 1 quân của đối phương");
 							gameForm.setGameStatus(GameStatus.WAIT_FOR_EATING);
 						} else {
@@ -105,6 +119,8 @@ public class MainGameController {
 					}
 					
 					break;
+				case FINISH:
+					break;
 				default:
 					break;
 			}
@@ -112,6 +128,21 @@ public class MainGameController {
 		model.addAttribute("gameForm", gameForm);
 	}
 	
+	private String getPlayerWin() {
+		String playerWin = "";
+		if ((this.gameForm.COUNTER - this.gameForm.getNumberEatPlay1()) <= 2) {
+			playerWin = PointStatus.PLAYER1.name();
+		}
+		
+		if ((this.gameForm.COUNTER - this.gameForm.getNumberEatPlay2()) <= 2) {
+			playerWin = PointStatus.PLAYER2.name();
+		}
+		return playerWin;
+	}
+	
+	/**
+	 * Set Trang Ba to false because of moving a Trang Ba's item
+	 */
 	private void removeTrangBa() {
 		String pointSelected = this.gameForm.getPointSelected();
 		
@@ -123,6 +154,9 @@ public class MainGameController {
 		}
 	}
 	
+	/**
+	 * Eat an item
+	 */
 	private void doEating() {
 		if (eatValid(this.gameForm)) {
 			gameForm.setGameStatus(GameStatus.ON_GOING);
@@ -135,8 +169,10 @@ public class MainGameController {
 		}
 	}
 
+	/**
+	 * assign to the next player
+	 */
 	private void assignToNextPlayer () {
-		// assign to the next player
 		if (gameForm.getCurrentPlayer()  == PointStatus.PLAYER1) {
 			gameForm.setCurrentPlayer(PointStatus.PLAYER2);
 			
@@ -158,7 +194,9 @@ public class MainGameController {
 	 * @param pointEat
 	 */
 	private boolean eatValid(GameForm gameForm) {
-		if (GameUtils.isPointLocked(gameForm, gameForm.getPointSelected())) {
+		if (!StringUtils.isNotEmpty(gameForm.getPointMap().get(PointName.valueOf(gameForm.getPointSelected()))) 
+				|| gameForm.getCurrentPlayer().name().equals(gameForm.getPointMap().get(PointName.valueOf(gameForm.getPointSelected())))
+				|| GameUtils.isPointLocked(gameForm)) {
 				this.gameForm.setGameMessage("Không hợp lệ, chọn quân khác!!!");
 				return false;
 		}
@@ -170,6 +208,15 @@ public class MainGameController {
 		}
 		
 		return true;
+	}
+	
+	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.GET)
+	public String getUI(Model model) {
+		this.gameForm = new GameForm();// add temporary
+		this.gameForm.setCurrentPlayer(PointStatus.PLAYER1);
+		this.gameForm.setGameStatus(GameStatus.ON_GOING);
+		model.addAttribute("gameForm", gameForm);
+		return "mainGame";
 	}
 
 	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a1")
@@ -299,139 +346,6 @@ public class MainGameController {
 		return redirectToMainGame;
 	}
 	
-	
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.GET)
-	public String getUI(Model model) {
-		if (gameForm.getCurrentPlayer() == null) {
-			gameForm.setCurrentPlayer(PointStatus.PLAYER1);
-		}
-		model.addAttribute("gameForm", gameForm);
-		return "mainGame";
-	}
-	
-	private boolean isPlayerCanEatOne(GameForm gameForm) {
-		//======================A area=======================
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.A1)
-				, gameForm.getPointMap().get(PointName.A2), gameForm.getPointMap().get(PointName.A3)) 
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.A1_A2_A3))) {
-			
-			gameForm.getTrangBaStatus().put(TrangBaPoints.A1_A2_A3, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.A3)
-				, gameForm.getPointMap().get(PointName.A4), gameForm.getPointMap().get(PointName.A5))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.A3_A4_A5))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.A3_A4_A5, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.A5)
-				, gameForm.getPointMap().get(PointName.A6), gameForm.getPointMap().get(PointName.A7))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.A5_A6_A7))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.A5_A6_A7, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.A7)
-				, gameForm.getPointMap().get(PointName.A8), gameForm.getPointMap().get(PointName.A1))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.A7_A8_A1))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.A7_A8_A1, true);
-			return true;
-		}
-		
-		//======================B area=======================
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.B1)
-				, gameForm.getPointMap().get(PointName.B2), gameForm.getPointMap().get(PointName.B3))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.B1_B2_B3))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.B1_B2_B3, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.B3)
-				, gameForm.getPointMap().get(PointName.B4), gameForm.getPointMap().get(PointName.B5))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.B3_B4_B5))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.B3_B4_B5 , true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.B5)
-				, gameForm.getPointMap().get(PointName.B6), gameForm.getPointMap().get(PointName.B7))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.B5_B6_B7))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.B5_B6_B7, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.B7)
-				, gameForm.getPointMap().get(PointName.B8), gameForm.getPointMap().get(PointName.B1))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.B7_B8_B1))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.B7_B8_B1, true);
-			return true;
-		}
-		
-		//======================C area=======================
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.C1)
-				, gameForm.getPointMap().get(PointName.C2), gameForm.getPointMap().get(PointName.C3))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.C1_C2_C3))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.C1_C2_C3, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.C3)
-				, gameForm.getPointMap().get(PointName.C4), gameForm.getPointMap().get(PointName.C5))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.C3_C4_C5))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.C3_C4_C5, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.C5)
-				, gameForm.getPointMap().get(PointName.C6), gameForm.getPointMap().get(PointName.C7))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.C5_C6_C7))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.C5_C6_C7, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.C7)
-				, gameForm.getPointMap().get(PointName.C8), gameForm.getPointMap().get(PointName.C1))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.C7_C8_C1))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.C7_C8_C1, true);
-			return true;
-		}
-		
-		//============================================= others
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.A2)
-				, gameForm.getPointMap().get(PointName.B2), gameForm.getPointMap().get(PointName.C2))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.A2_B2_C2))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.A2_B2_C2, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.A4)
-				, gameForm.getPointMap().get(PointName.B4), gameForm.getPointMap().get(PointName.C4))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.A4_B4_C4))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.A4_B4_C4, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.A6)
-				, gameForm.getPointMap().get(PointName.B6), gameForm.getPointMap().get(PointName.C6))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.A6_B6_C6))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.A6_B6_C6, true);
-			return true;
-		}
-		
-		if (StringUtils.isAllEqual(gameForm.getPointMap().get(PointName.A8)
-				, gameForm.getPointMap().get(PointName.B8), gameForm.getPointMap().get(PointName.C8))
-				&& !BooleanUtils.isTrue(gameForm.getTrangBaStatus().get(TrangBaPoints.A8_B8_C8))) {
-			gameForm.getTrangBaStatus().put(TrangBaPoints.A8_B8_C8, true);
-			return true;
-		}
-		
-		return false;
-	}
-
-
 	public GameForm getGameForm() {
 		return gameForm;
 	}
@@ -441,13 +355,4 @@ public class MainGameController {
 		this.gameForm = gameForm;
 	}
 
-//	public String getPlayerEat() {
-//		return playerEat;
-//	}
-//
-//
-//	public void setPlayerEat(String playerEat) {
-//		this.playerEat = playerEat;
-//	}
-	
 }
