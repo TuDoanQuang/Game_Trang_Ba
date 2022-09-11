@@ -27,28 +27,62 @@ public class MainGameController {
 	public GameForm gameForm  ;
 	private final static String redirectToMainGame = "mainGame";
 	private void callRobotPlay(Model model) {
-			
+			System.out.println("gameForm.getGameStatus() " + gameForm.getGameStatus());
 		if (gameForm.getGameStatus() == GameStatus.ON_GOING) {
-			List<String> pointsAbleToTrangBa = GameUtils.getPositionsAbleTrangBa(gameForm);
-			if (pointsAbleToTrangBa != null && pointsAbleToTrangBa.size() > 0) {
-				String robotPointSelection = pointsAbleToTrangBa.get(getRandompoint(pointsAbleToTrangBa.size()));
-				excuteGame(model, robotPointSelection);
+			if (this.gameForm.getCounterPlayer1() > 0 || this.gameForm.getCounterPlayer2() > 0) {
+				// Find the point which able to become Trang Ba first
+				List<String> pointsAbleToTrangBa = GameUtils.getPositionsAbleTrangBa(gameForm);
+				if (pointsAbleToTrangBa != null && pointsAbleToTrangBa.size() > 0) {
+					String robotPointSelection = pointsAbleToTrangBa.get(getRandompoint(pointsAbleToTrangBa.size()));
+					excuteGame(model, robotPointSelection);
+				} else {
+					
+					// make a point random
+					List<PointName> pointValid = new ArrayList<>();
+					this.gameForm.getPointMap().forEach((k, v) -> {
+						if (v == null || v.isEmpty()) {
+							pointValid.add(k);
+						}
+					});
+					PointName robotPointSelection = pointValid.get(getRandompoint(pointValid.size()));
+					excuteGame(model, robotPointSelection.name());
+				}
 			} else {
-				
-				// make a point
-				List<PointName> pointValid = new ArrayList<>();
+				List<PointName> validPointsCanMove = new ArrayList<>();
 				this.gameForm.getPointMap().forEach((k, v) -> {
-					if (v == null || v.isEmpty()) {
-						pointValid.add(k);
+					if (PointStatus.PLAYER2.name().equals(v)) {
+						validPointsCanMove.add(k);
 					}
 				});
-				PointName robotPointSelection = pointValid.get(getRandompoint(pointValid.size()));
-				excuteGame(model, robotPointSelection.name());
+				
+				if (validPointsCanMove.size() > 0) {
+					PointName robotPointSelection = validPointsCanMove.get(getRandompoint(validPointsCanMove.size()));
+					System.out.println("Point wait to move: " + robotPointSelection);
+					excuteGame(model, robotPointSelection.name());
+				}
 			}
+			
 		} else if (gameForm.getGameStatus() == GameStatus.WAIT_FOR_MOVING) {
-			// TODO
+			// random point to move on
+			PointName pointWaitingToMove = gameForm.getPointMap().entrySet().stream()
+					.filter(x -> (x.getValue() != null && (x.getValue().equals(PointStatus.WAIT_PLAYER2_MOVE.name()))))
+					.map(Map.Entry::getKey).findFirst().orElse(null);
+			if (pointWaitingToMove != null) {
+				List<String> pointsCanMoveOn = GameUtils.getPointsCanMoveOn(gameForm, pointWaitingToMove.name());
+				if (pointsCanMoveOn.size() > 0) {
+					String pointMoveOn = pointsCanMoveOn.get(getRandompoint(pointsCanMoveOn.size()));
+					System.out.println("pointMoveOn: " + pointMoveOn);
+					excuteGame(model, pointMoveOn);
+				}
+			}
+			
 		} else if (gameForm.getGameStatus() == GameStatus.WAIT_FOR_EATING) {
-			// TODO
+			List<String> pointsCanEat = GameUtils.getPointsCanEat(gameForm);
+			if (pointsCanEat.size() > 0) {
+				String pointCanEat = pointsCanEat.get(getRandompoint(pointsCanEat.size()));
+				System.out.println("pointCanEat: " + pointCanEat);
+				excuteGame(model, pointCanEat);
+			}
 		}
 			
 	}
@@ -162,7 +196,10 @@ public class MainGameController {
 			}
 		}
 		if (this.gameForm.getMode() == GameMode.ONE_PLAYER) {
-			if (gameForm.getCurrentPlayer() == PointStatus.PLAYER2 && gameForm.getGameStatus() == GameStatus.ON_GOING) {
+			if (gameForm.getCurrentPlayer() == PointStatus.PLAYER2 
+					&& (gameForm.getGameStatus() == GameStatus.ON_GOING 
+				|| gameForm.getGameStatus() == GameStatus.WAIT_FOR_MOVING
+				|| gameForm.getGameStatus() == GameStatus.WAIT_FOR_EATING)) {
 				callRobotPlay(model);
 			}
 		} 
@@ -238,7 +275,7 @@ public class MainGameController {
 	private boolean eatValid(GameForm gameForm) {
 		if (!StringUtils.isNotEmpty(gameForm.getPointMap().get(PointName.valueOf(gameForm.getPointSelected()))) 
 				|| gameForm.getCurrentPlayer().name().equals(gameForm.getPointMap().get(PointName.valueOf(gameForm.getPointSelected())))
-				|| GameUtils.isPointLocked(gameForm)) {
+				|| GameUtils.isPointLocked(gameForm, gameForm.getPointSelected())) {
 				this.gameForm.setGameMessage("Không hợp lệ, chọn quân khác!!!");
 				return false;
 		}

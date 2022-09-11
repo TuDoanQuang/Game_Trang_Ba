@@ -14,8 +14,7 @@ public class GameUtils {
 	private static final String underLine = "_";
 	private GameUtils() {}
 	
-	public static boolean isPointLocked(GameForm gameForm) {
-		String pointSelected = gameForm.getPointSelected();
+	public static boolean isPointLocked(GameForm gameForm, String pointSelected) {
 		String round = pointSelected.substring(0, 1);
 		int pointNumber = Integer.valueOf(pointSelected.substring(1));
 		
@@ -289,6 +288,73 @@ public class GameUtils {
 		}
 		
 		return false;
+	}
+	
+	public static List<String> getPointsCanMoveOn(GameForm gameForm, String pointWaitingToMove) {
+		String roundMoving = pointWaitingToMove.substring(0, 1);
+		int pointNumerMoving = Integer.valueOf(pointWaitingToMove.substring(1));
+		List<String> pointsCanMoveOn = new ArrayList<>();
+		if (pointNumerMoving == 1) {
+			if (gameForm.getPointMap().get(PointName.valueOf(roundMoving + 8)) == null) {
+				pointsCanMoveOn.add(roundMoving + 8);
+			}
+			
+			if (gameForm.getPointMap().get(PointName.valueOf(roundMoving + 2)) == null) {
+				pointsCanMoveOn.add(roundMoving + 2);
+			}
+		} else if (pointNumerMoving == 8) {
+			if (gameForm.getPointMap().get(PointName.valueOf(roundMoving + 1)) == null) {
+				pointsCanMoveOn.add(roundMoving + 1);
+			}
+			
+			if (gameForm.getPointMap().get(PointName.valueOf(roundMoving + 7)) == null) {
+				pointsCanMoveOn.add(roundMoving + 7);
+			}
+		} else {
+			String higherPoint = roundMoving + (pointNumerMoving + 1);
+			if (gameForm.getPointMap().get(PointName.valueOf(higherPoint)) == null) {
+				pointsCanMoveOn.add(higherPoint);
+			}
+			
+			String lowerPoint = roundMoving + (pointNumerMoving - 1);
+			if (gameForm.getPointMap().get(PointName.valueOf(lowerPoint)) == null) {
+				pointsCanMoveOn.add(lowerPoint);
+			}
+			
+		}
+		
+		if (pointNumerMoving == 2 || pointNumerMoving == 4 || pointNumerMoving == 6 || pointNumerMoving == 8) {
+			if (roundMoving.equalsIgnoreCase("A") || roundMoving.equalsIgnoreCase("C")) {
+				String point = "B"+pointNumerMoving;
+				if (gameForm.getPointMap().get(PointName.valueOf(point)) == null) {
+					pointsCanMoveOn.add(point);
+				}
+			} else if (roundMoving.equalsIgnoreCase("B")) {
+				String pointA = "A"+pointNumerMoving;
+				if (gameForm.getPointMap().get(PointName.valueOf(pointA)) == null) {
+					pointsCanMoveOn.add(pointA);
+				}
+				
+				String pointC = "C"+pointNumerMoving;
+				if (gameForm.getPointMap().get(PointName.valueOf(pointC)) == null) {
+					pointsCanMoveOn.add(pointC);
+				}
+			}
+		}
+		
+		return pointsCanMoveOn;
+	}
+	
+	public static List<String> getPointsCanEat(GameForm gameForm) {
+		List<String> pointsCanEat = new ArrayList<>();
+		gameForm.getPointMap().forEach((k, v) -> {
+			if (v != null && PointStatus.PLAYER1.name().equals(v)) {
+				if (!GameUtils.isPointLocked(gameForm, k.name())) {
+					pointsCanEat.add(k.name());
+				}
+			}
+		});
+		return pointsCanEat;
 	}
 	
 }
