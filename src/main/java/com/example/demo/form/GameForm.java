@@ -13,7 +13,7 @@ import com.example.demo.utils.StringUtils;
 public class GameForm {
 
 	// the law fix value is 9
-	public final int COUNTER = 5;
+	public final int COUNTER = 9;
 	private GameStatus gameStatus;
 	private PointStatus currentPlayer;
 	private String pointSelected;

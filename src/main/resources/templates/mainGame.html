@@ -9,15 +9,16 @@
    
    <script th:inline="javascript">
    		var gameStatus = [[${gameForm.gameStatus}]];
+   		var gameMode = [[${gameForm.mode.value}]];
    		if (gameStatus == "FINISH") {
 			if (confirm([[${gameForm.gameMessage}]] + "\nChơi ván mới?")) {
-			   window.location.href = "../mainGame";
+			   window.location.href = "../mainGame?mode=" + gameMode;
 			  } else {
 			    txt = "You pressed Cancel!";
 			  }
 		}
    </script>
-   	<a th:href="@{/mainGame}">Chơi lại</a>
+   	<a th:href="@{/mainGame?mode=} + ${gameForm.mode.value}">Chơi lại</a>
       <div>
         <form th:action="@{/mainGame}" method="POST">
         	<table border="1" class="center" style="margin-bottom: 50px;">

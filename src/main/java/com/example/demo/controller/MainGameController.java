@@ -27,27 +27,36 @@ public class MainGameController {
 	public GameForm gameForm  ;
 	private final static String redirectToMainGame = "mainGame";
 	private void callRobotPlay(Model model) {
-			System.out.println("gameForm.getGameStatus() " + gameForm.getGameStatus());
 		if (gameForm.getGameStatus() == GameStatus.ON_GOING) {
+			// Putting part
 			if (this.gameForm.getCounterPlayer1() > 0 || this.gameForm.getCounterPlayer2() > 0) {
+				
 				// Find the point which able to become Trang Ba first
-				List<String> pointsAbleToTrangBa = GameUtils.getPositionsAbleTrangBa(gameForm);
+				List<String> pointsAbleToTrangBa = GameUtils.getPositionsAbleTrangBa(gameForm, PointStatus.PLAYER2);
 				if (pointsAbleToTrangBa != null && pointsAbleToTrangBa.size() > 0) {
 					String robotPointSelection = pointsAbleToTrangBa.get(getRandompoint(pointsAbleToTrangBa.size()));
 					excuteGame(model, robotPointSelection);
 				} else {
-					
-					// make a point random
-					List<PointName> pointValid = new ArrayList<>();
-					this.gameForm.getPointMap().forEach((k, v) -> {
-						if (v == null || v.isEmpty()) {
-							pointValid.add(k);
-						}
-					});
-					PointName robotPointSelection = pointValid.get(getRandompoint(pointValid.size()));
-					excuteGame(model, robotPointSelection.name());
+					List<String> pointsAbleToTrangBaOfEnemy = GameUtils.getPositionsAbleTrangBa(gameForm, PointStatus.PLAYER1);
+					if (pointsAbleToTrangBaOfEnemy != null && pointsAbleToTrangBaOfEnemy.size() > 0) {
+						String robotLockPointSelection = pointsAbleToTrangBaOfEnemy.get(getRandompoint(pointsAbleToTrangBaOfEnemy.size()));
+						System.out.println("robotLockPointSelection " + robotLockPointSelection);
+						excuteGame(model, robotLockPointSelection);				
+					} else {
+						// make a point random
+						List<PointName> pointValid = new ArrayList<>();
+						this.gameForm.getPointMap().forEach((k, v) -> {
+							if (v == null || v.isEmpty()) {
+								pointValid.add(k);
+							}
+						});
+						PointName robotPointSelection = pointValid.get(getRandompoint(pointValid.size()));
+						excuteGame(model, robotPointSelection.name());
+					}
 				}
-			} else {
+				
+				
+			} else {// Moving part
 				List<PointName> validPointsCanMove = new ArrayList<>();
 				this.gameForm.getPointMap().forEach((k, v) -> {
 					if (PointStatus.PLAYER2.name().equals(v)) {

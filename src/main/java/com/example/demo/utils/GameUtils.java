@@ -60,7 +60,7 @@ public class GameUtils {
 		return false;
 	}
 	
-	public static List<String> getPositionsAbleTrangBa(GameForm gameForm) {
+	public static List<String> getPositionsAbleTrangBa(GameForm gameForm,PointStatus player) {
 		List<String> pointNames = new ArrayList<>();
 		for (String round : rounds) {
 			String point1 = round + 1;
@@ -72,60 +72,60 @@ public class GameUtils {
 			String point7 = round + 7;
 			String point8 = round + 8;
 			String[] pointOf123 = {point1, point2, point3};
-			Integer pointOf123Index = getPositionAbleTrangBa(gameForm, pointOf123);
+			Integer pointOf123Index = getPositionAbleTrangBa(gameForm, pointOf123, player);
 			if (pointOf123Index != null) {
 				pointNames.add(pointOf123[pointOf123Index]);
 			}
 			String[] pointOf345 = {point3, point4, point5};
-			Integer pointOf345Index = getPositionAbleTrangBa(gameForm, pointOf345);
+			Integer pointOf345Index = getPositionAbleTrangBa(gameForm, pointOf345, player);
 			if (pointOf345Index != null ) {
 				pointNames.add(pointOf345[pointOf345Index]);
 			}
 			
 			String[] pointOf567 = {point5, point6, point7};
-			Integer pointOf567Index = getPositionAbleTrangBa(gameForm, pointOf567);
+			Integer pointOf567Index = getPositionAbleTrangBa(gameForm, pointOf567, player);
 			if (pointOf567Index != null) {
 				pointNames.add(pointOf567[pointOf567Index]);
 			}
 			
 			String[] pointOf781 = {point7, point8, point1};
-			Integer pointOf781Index = getPositionAbleTrangBa(gameForm, pointOf781);
+			Integer pointOf781Index = getPositionAbleTrangBa(gameForm, pointOf781, player);
 			if (pointOf781Index != null) {
 				pointNames.add(pointOf781[pointOf781Index]);
 			}
 		}
 		
 		String pointOf222 = getPositionAbleTrangBa(2, gameForm.getPointMap().get(PointName.A2)
-				, gameForm.getPointMap().get(PointName.B2), gameForm.getPointMap().get(PointName.C2));
+				, gameForm.getPointMap().get(PointName.B2), gameForm.getPointMap().get(PointName.C2), player);
 		if (StringUtils.isNotEmpty(pointOf222)) {
 			pointNames.add(pointOf222);
 		}
 		
 		String pointOf444 = getPositionAbleTrangBa(4, gameForm.getPointMap().get(PointName.A4)
-				, gameForm.getPointMap().get(PointName.B4), gameForm.getPointMap().get(PointName.C4));
+				, gameForm.getPointMap().get(PointName.B4), gameForm.getPointMap().get(PointName.C4), player);
 		if (StringUtils.isNotEmpty(pointOf444)) {
 			pointNames.add(pointOf444);
 		}
 		
 		String pointOf666 = getPositionAbleTrangBa(6, gameForm.getPointMap().get(PointName.A6)
-				, gameForm.getPointMap().get(PointName.B6), gameForm.getPointMap().get(PointName.C6));
+				, gameForm.getPointMap().get(PointName.B6), gameForm.getPointMap().get(PointName.C6), player);
 		if (StringUtils.isNotEmpty(pointOf666)) {
 			pointNames.add(pointOf666);
 		}
 		
 		String pointOf888 = getPositionAbleTrangBa(8, gameForm.getPointMap().get(PointName.A8)
-				, gameForm.getPointMap().get(PointName.B8), gameForm.getPointMap().get(PointName.C8));
+				, gameForm.getPointMap().get(PointName.B8), gameForm.getPointMap().get(PointName.C8), player);
 		if (StringUtils.isNotEmpty(pointOf888)) {
 			pointNames.add(pointOf888);
 		}
 		return pointNames;
 	}
 	
-	private static Integer getPositionAbleTrangBa(GameForm gameForm, String[] points) {
-		if (points != null && points.length == 3) {
+	private static Integer getPositionAbleTrangBa(GameForm gameForm, String[] points, PointStatus player) {
+		if (points != null && points.length == 3 && player != null) {
 			if (Arrays.asList(points).stream()
 					.anyMatch(x -> (gameForm.getPointMap().get(PointName.valueOf(x)) != null 
-					&& !gameForm.getPointMap().get(PointName.valueOf(x)).equals(PointStatus.PLAYER2.name())))) {
+					&& !gameForm.getPointMap().get(PointName.valueOf(x)).equals(player.name())))) {
 				return null;
 			}
 			
@@ -145,13 +145,13 @@ public class GameUtils {
 		return null;
 	}
 	
-	private static String getPositionAbleTrangBa(int point, String pointOfA, String pointOfB, String pointOfC) {
+	private static String getPositionAbleTrangBa(int point, String pointOfA, String pointOfB, String pointOfC, PointStatus player) {
 		
-		if (StringUtils.isAllEqual(pointOfA, pointOfB) && PointStatus.PLAYER2.name().equals(pointOfA) && !StringUtils.isNotEmpty(pointOfC)) {
+		if (StringUtils.isAllEqual(pointOfA, pointOfB) && player.name().equals(pointOfA) && !StringUtils.isNotEmpty(pointOfC)) {
 			return "C"+point;
-		} else if (StringUtils.isAllEqual(pointOfB, pointOfC) && PointStatus.PLAYER2.name().equals(pointOfB) && !StringUtils.isNotEmpty(pointOfA)) {
+		} else if (StringUtils.isAllEqual(pointOfB, pointOfC) && player.name().equals(pointOfB) && !StringUtils.isNotEmpty(pointOfA)) {
 			return "A"+point;
-		} else if (StringUtils.isAllEqual(pointOfC, pointOfA) && PointStatus.PLAYER2.name().equals(pointOfC) && !StringUtils.isNotEmpty(pointOfB)) {
+		} else if (StringUtils.isAllEqual(pointOfC, pointOfA) && player.name().equals(pointOfC) && !StringUtils.isNotEmpty(pointOfB)) {
 			return "B"+point;
 		}
 		
