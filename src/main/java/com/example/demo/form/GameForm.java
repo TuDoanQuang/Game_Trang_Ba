@@ -3,6 +3,7 @@ package com.example.demo.form;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.demo.enums.GameMode;
 import com.example.demo.enums.GameStatus;
 import com.example.demo.enums.PointName;
 import com.example.demo.enums.PointStatus;
@@ -20,6 +21,7 @@ public class GameForm {
 	private int counterPlayer2 = COUNTER;
 	private int numberEatPlay1 = 0;
 	private int numberEatPlay2 = 0;
+	private GameMode mode;
 	private String gameMessage;
 	private Map<PointName, String> pointMap;
 	private Map<TrangBaPoints, Boolean> trangBaStatus;
@@ -163,4 +165,13 @@ public class GameForm {
 	public void setGameStatus(GameStatus gameStatus) {
 		this.gameStatus = gameStatus;
 	}
+
+	public GameMode getMode() {
+		return mode;
+	}
+
+	public void setMode(GameMode mode) {
+		this.mode = mode;
+	}
+	
 }

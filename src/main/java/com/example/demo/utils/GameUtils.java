@@ -1,11 +1,17 @@
 package com.example.demo.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.example.demo.enums.PointName;
+import com.example.demo.enums.PointStatus;
 import com.example.demo.enums.TrangBaPoints;
 import com.example.demo.form.GameForm;
 
 public class GameUtils {
-
+	private static final String[] rounds = {"A", "B" , "C"};
+	private static final String underLine = "_";
 	private GameUtils() {}
 	
 	public static boolean isPointLocked(GameForm gameForm) {
@@ -55,14 +61,110 @@ public class GameUtils {
 		return false;
 	}
 	
+	public static List<String> getPositionsAbleTrangBa(GameForm gameForm) {
+		List<String> pointNames = new ArrayList<>();
+		for (String round : rounds) {
+			String point1 = round + 1;
+			String point2 = round + 2;
+			String point3 = round + 3;
+			String point4 = round + 4;
+			String point5 = round + 5;
+			String point6 = round + 6;
+			String point7 = round + 7;
+			String point8 = round + 8;
+			String[] pointOf123 = {point1, point2, point3};
+			Integer pointOf123Index = getPositionAbleTrangBa(gameForm, pointOf123);
+			if (pointOf123Index != null) {
+				pointNames.add(pointOf123[pointOf123Index]);
+			}
+			String[] pointOf345 = {point3, point4, point5};
+			Integer pointOf345Index = getPositionAbleTrangBa(gameForm, pointOf345);
+			if (pointOf345Index != null ) {
+				pointNames.add(pointOf345[pointOf345Index]);
+			}
+			
+			String[] pointOf567 = {point5, point6, point7};
+			Integer pointOf567Index = getPositionAbleTrangBa(gameForm, pointOf567);
+			if (pointOf567Index != null) {
+				pointNames.add(pointOf567[pointOf567Index]);
+			}
+			
+			String[] pointOf781 = {point7, point8, point1};
+			Integer pointOf781Index = getPositionAbleTrangBa(gameForm, pointOf781);
+			if (pointOf781Index != null) {
+				pointNames.add(pointOf781[pointOf781Index]);
+			}
+		}
+		
+		String pointOf222 = getPositionAbleTrangBa(2, gameForm.getPointMap().get(PointName.A2)
+				, gameForm.getPointMap().get(PointName.B2), gameForm.getPointMap().get(PointName.C2));
+		if (StringUtils.isNotEmpty(pointOf222)) {
+			pointNames.add(pointOf222);
+		}
+		
+		String pointOf444 = getPositionAbleTrangBa(4, gameForm.getPointMap().get(PointName.A4)
+				, gameForm.getPointMap().get(PointName.B4), gameForm.getPointMap().get(PointName.C4));
+		if (StringUtils.isNotEmpty(pointOf444)) {
+			pointNames.add(pointOf444);
+		}
+		
+		String pointOf666 = getPositionAbleTrangBa(6, gameForm.getPointMap().get(PointName.A6)
+				, gameForm.getPointMap().get(PointName.B6), gameForm.getPointMap().get(PointName.C6));
+		if (StringUtils.isNotEmpty(pointOf666)) {
+			pointNames.add(pointOf666);
+		}
+		
+		String pointOf888 = getPositionAbleTrangBa(8, gameForm.getPointMap().get(PointName.A8)
+				, gameForm.getPointMap().get(PointName.B8), gameForm.getPointMap().get(PointName.C8));
+		if (StringUtils.isNotEmpty(pointOf888)) {
+			pointNames.add(pointOf888);
+		}
+		return pointNames;
+	}
+	
+	private static Integer getPositionAbleTrangBa(GameForm gameForm, String[] points) {
+		if (points != null && points.length == 3) {
+			if (Arrays.asList(points).stream()
+					.anyMatch(x -> (gameForm.getPointMap().get(PointName.valueOf(x)) != null 
+					&& !gameForm.getPointMap().get(PointName.valueOf(x)).equals(PointStatus.PLAYER2.name())))) {
+				return null;
+			}
+			
+			String point0 = gameForm.getPointMap().get(PointName.valueOf(points[0]));
+			String point1 = gameForm.getPointMap().get(PointName.valueOf(points[1]));
+			String point2 = gameForm.getPointMap().get(PointName.valueOf(points[2]));
+			
+			if (StringUtils.isAllEqual(point0, point1) && !StringUtils.isNotEmpty(point2)) {
+				return 2;
+			} else if (StringUtils.isAllEqual(point2, point0) && !StringUtils.isNotEmpty(point1)) {
+				return 1;
+			} else if (StringUtils.isAllEqual(point1, point2) && !StringUtils.isNotEmpty(point0)) {
+				return 0;
+			}
+		}
+		
+		return null;
+	}
+	
+	private static String getPositionAbleTrangBa(int point, String pointOfA, String pointOfB, String pointOfC) {
+		
+		if (StringUtils.isAllEqual(pointOfA, pointOfB) && PointStatus.PLAYER2.name().equals(pointOfA) && !StringUtils.isNotEmpty(pointOfC)) {
+			return "C"+point;
+		} else if (StringUtils.isAllEqual(pointOfB, pointOfC) && PointStatus.PLAYER2.name().equals(pointOfB) && !StringUtils.isNotEmpty(pointOfA)) {
+			return "A"+point;
+		} else if (StringUtils.isAllEqual(pointOfC, pointOfA) && PointStatus.PLAYER2.name().equals(pointOfC) && !StringUtils.isNotEmpty(pointOfB)) {
+			return "B"+point;
+		}
+		
+		return null;
+	}
 	/**
 	 * check if 3 points then eat one
 	 * @param gameForm
 	 * @return
 	 */
 	public static boolean isPlayerCanEatOne(GameForm gameForm) {
-		String[] rounds = {"A", "B" , "C"};
-		String underLine = "_";
+		
 		for (String round : rounds) {
 			String point1 = round + 1;
 			String point2 = round + 2;

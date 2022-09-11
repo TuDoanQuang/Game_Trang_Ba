@@ -1,6 +1,9 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.enums.GameMode;
 import com.example.demo.enums.GameStatus;
 import com.example.demo.enums.PointName;
 import com.example.demo.enums.PointStatus;
@@ -22,35 +26,67 @@ public class MainGameController {
 
 	public GameForm gameForm  ;
 	private final static String redirectToMainGame = "mainGame";
+	private void callRobotPlay(Model model) {
+			
+		if (gameForm.getGameStatus() == GameStatus.ON_GOING) {
+			List<String> pointsAbleToTrangBa = GameUtils.getPositionsAbleTrangBa(gameForm);
+			if (pointsAbleToTrangBa != null && pointsAbleToTrangBa.size() > 0) {
+				String robotPointSelection = pointsAbleToTrangBa.get(getRandompoint(pointsAbleToTrangBa.size()));
+				excuteGame(model, robotPointSelection);
+			} else {
+				
+				// make a point
+				List<PointName> pointValid = new ArrayList<>();
+				this.gameForm.getPointMap().forEach((k, v) -> {
+					if (v == null || v.isEmpty()) {
+						pointValid.add(k);
+					}
+				});
+				PointName robotPointSelection = pointValid.get(getRandompoint(pointValid.size()));
+				excuteGame(model, robotPointSelection.name());
+			}
+		} else if (gameForm.getGameStatus() == GameStatus.WAIT_FOR_MOVING) {
+			// TODO
+		} else if (gameForm.getGameStatus() == GameStatus.WAIT_FOR_EATING) {
+			// TODO
+		}
+			
+	}
+	private int getRandompoint(int upperbound) {
+		 Random rand = new Random(); //instance of random class
+	     int a = rand.nextInt(upperbound);
+	     return a; 
+	}
 	
 	private void excuteGame(Model model, String pointSelection) {
+		// play with robot
 		
 		this.gameForm.setPointSelected(pointSelection);
 		
 		// out of 9 items
 		if (this.gameForm.getCounterPlayer1() > 0 || this.gameForm.getCounterPlayer2() > 0) {
 			switch (gameForm.getGameStatus()) {
-				case ON_GOING:
-					boolean isValidPoint = GameUtils.isPointSelectedValid(this.gameForm, pointSelection, false, this.gameForm.getCurrentPlayer().name());
+			case ON_GOING:
+				boolean isValidPoint = GameUtils.isPointSelectedValid(this.gameForm, pointSelection, false, this.gameForm.getCurrentPlayer().name());
+				
+				if (isValidPoint) {
+					if (GameUtils.isPlayerCanEatOne(this.gameForm)) {
+						this.gameForm.setGameMessage(this.gameForm.getCurrentPlayer().name() + " ăn 1 quân, chọn lấy 1 quân của đối phương");
+						gameForm.setGameStatus(GameStatus.WAIT_FOR_EATING);
+						break;
+					} 
 					
-					if (isValidPoint) {
-						if (GameUtils.isPlayerCanEatOne(this.gameForm)) {
-							this.gameForm.setGameMessage(this.gameForm.getCurrentPlayer().name() + " ăn 1 quân, chọn lấy 1 quân của đối phương");
-							gameForm.setGameStatus(GameStatus.WAIT_FOR_EATING);
-							break;
-						} 
-						
-						assignToNextPlayer();
-					} else {
-						this.gameForm.setGameMessage("Không hợp lệ, xin chọn điểm khác!!!");
-					}
-					
-					break;
-				case WAIT_FOR_EATING: 
-					doEating();
-					break;
-				default:
-					break;
+					assignToNextPlayer();
+				} else {
+					this.gameForm.setGameMessage("Không hợp lệ, xin chọn điểm khác!!!");
+				}
+				
+				break;
+			case WAIT_FOR_EATING: 
+				doEating();
+				break;
+			default:
+				break;
 			}
 			
 			if (this.gameForm.getCounterPlayer1() == 0 && this.gameForm.getCounterPlayer2() == 0) {
@@ -60,71 +96,77 @@ public class MainGameController {
 		} else {
 			
 			switch (gameForm.getGameStatus()) {
-				case ON_GOING:
-					if (GameUtils.isValidSelectPointToMove(gameForm, pointSelection)) {
-						if (gameForm.getCurrentPlayer() == PointStatus.PLAYER1) {
-							this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER1_MOVE.name());
-						} else {
-							this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER2_MOVE.name());
-						}
-						this.gameForm.setGameStatus(GameStatus.WAIT_FOR_MOVING);
-						this.gameForm.setGameMessage("Chọn vị trí trống để di chuyển tới");
+			case ON_GOING:
+				if (GameUtils.isValidSelectPointToMove(gameForm, pointSelection)) {
+					if (gameForm.getCurrentPlayer() == PointStatus.PLAYER1) {
+						this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER1_MOVE.name());
 					} else {
-						this.gameForm.setGameMessage("Không hợp lệ, chọn quân của mình để di chuyển!!");
+						this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER2_MOVE.name());
 					}
-					break;
-				case WAIT_FOR_EATING:
-					doEating();
-
-					String playerWin = getPlayerWin();
-					if (StringUtils.isNotEmpty(playerWin)) {
-						this.gameForm.setGameStatus(GameStatus.FINISH);
-						this.gameForm.setGameMessage(playerWin + " thắng! Kết thúc game!");
-					}
-					break;
-				case WAIT_FOR_MOVING:
-					PointName pointWaitingToMove = gameForm.getPointMap().entrySet().stream()
-					.filter(x -> (x.getValue() != null && (x.getValue().equals(PointStatus.WAIT_PLAYER1_MOVE.name()) 
-							|| x.getValue().equals(PointStatus.WAIT_PLAYER2_MOVE.name()))))
-					.map(Map.Entry::getKey).findFirst().orElse(null);
-					
-					// Player select another his point
-					if (gameForm.getPointMap().get(PointName.valueOf(pointSelection)) != null && pointWaitingToMove != null
-							&& pointWaitingToMove != PointName.valueOf(pointSelection)
-							&& this.gameForm.getPointMap().get(pointWaitingToMove).contains(gameForm.getPointMap().get(PointName.valueOf(pointSelection)))) {
-						if (gameForm.getCurrentPlayer() == PointStatus.PLAYER1) {
-							this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER1_MOVE.name());
-						} else {
-							this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER2_MOVE.name());
-						}
-						this.gameForm.getPointMap().put(pointWaitingToMove, gameForm.getCurrentPlayer().name());
-						
-						break;
-					}
-					
-					if (GameUtils.isDestinationValid(gameForm, pointWaitingToMove.name(), pointSelection)) {
-						this.gameForm.getPointMap().put(pointWaitingToMove, null);
-						this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), this.gameForm.getCurrentPlayer().name());
-						removeTrangBa();
-						if (GameUtils.isPlayerCanEatOne(gameForm)) {
-							this.gameForm.setGameMessage(this.gameForm.getCurrentPlayer().name() + " ăn 1 quân, chọn lấy 1 quân của đối phương");
-							gameForm.setGameStatus(GameStatus.WAIT_FOR_EATING);
-						} else {
-							this.gameForm.setGameStatus(GameStatus.ON_GOING);
-							assignToNextPlayer();
-						}
-						
+					this.gameForm.setGameStatus(GameStatus.WAIT_FOR_MOVING);
+					this.gameForm.setGameMessage("Chọn vị trí trống để di chuyển tới");
+				} else {
+					this.gameForm.setGameMessage("Không hợp lệ, chọn quân của mình để di chuyển!!");
+				}
+				break;
+			case WAIT_FOR_EATING:
+				doEating();
+				
+				String playerWin = getPlayerWin();
+				if (StringUtils.isNotEmpty(playerWin)) {
+					this.gameForm.setGameStatus(GameStatus.FINISH);
+					this.gameForm.setGameMessage(playerWin + " thắng! Kết thúc game!");
+				}
+				break;
+			case WAIT_FOR_MOVING:
+				PointName pointWaitingToMove = gameForm.getPointMap().entrySet().stream()
+				.filter(x -> (x.getValue() != null && (x.getValue().equals(PointStatus.WAIT_PLAYER1_MOVE.name()) 
+						|| x.getValue().equals(PointStatus.WAIT_PLAYER2_MOVE.name()))))
+				.map(Map.Entry::getKey).findFirst().orElse(null);
+				
+				// Player select another his point
+				if (gameForm.getPointMap().get(PointName.valueOf(pointSelection)) != null && pointWaitingToMove != null
+						&& pointWaitingToMove != PointName.valueOf(pointSelection)
+						&& this.gameForm.getPointMap().get(pointWaitingToMove).contains(gameForm.getPointMap().get(PointName.valueOf(pointSelection)))) {
+					if (gameForm.getCurrentPlayer() == PointStatus.PLAYER1) {
+						this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER1_MOVE.name());
 					} else {
-						this.gameForm.setGameMessage("Không hợp lệ, chọn quân của mình để di chuyển!!");
+						this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), PointStatus.WAIT_PLAYER2_MOVE.name());
 					}
+					this.gameForm.getPointMap().put(pointWaitingToMove, gameForm.getCurrentPlayer().name());
 					
 					break;
-				case FINISH:
-					break;
-				default:
-					break;
+				}
+				
+				if (GameUtils.isDestinationValid(gameForm, pointWaitingToMove.name(), pointSelection)) {
+					this.gameForm.getPointMap().put(pointWaitingToMove, null);
+					this.gameForm.getPointMap().put(PointName.valueOf(pointSelection), this.gameForm.getCurrentPlayer().name());
+					removeTrangBa();
+					if (GameUtils.isPlayerCanEatOne(gameForm)) {
+						this.gameForm.setGameMessage(this.gameForm.getCurrentPlayer().name() + " ăn 1 quân, chọn lấy 1 quân của đối phương");
+						gameForm.setGameStatus(GameStatus.WAIT_FOR_EATING);
+					} else {
+						this.gameForm.setGameStatus(GameStatus.ON_GOING);
+						assignToNextPlayer();
+					}
+					
+				} else {
+					this.gameForm.setGameMessage("Không hợp lệ, chọn quân của mình để di chuyển!!");
+				}
+				
+				break;
+			case FINISH:
+				break;
+			default:
+				break;
 			}
 		}
+		if (this.gameForm.getMode() == GameMode.ONE_PLAYER) {
+			if (gameForm.getCurrentPlayer() == PointStatus.PLAYER2 && gameForm.getGameStatus() == GameStatus.ON_GOING) {
+				callRobotPlay(model);
+			}
+		} 
+		
 		model.addAttribute("gameForm", gameForm);
 	}
 	
@@ -211,10 +253,11 @@ public class MainGameController {
 	}
 	
 	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.GET)
-	public String getUI(Model model) {
+	public String getUI(Model model, @RequestParam("mode") int mode) {
 		this.gameForm = new GameForm();// add temporary
 		this.gameForm.setCurrentPlayer(PointStatus.PLAYER1);
 		this.gameForm.setGameStatus(GameStatus.ON_GOING);
+		this.gameForm.setMode(GameMode.getGameModeByValue(mode));
 		model.addAttribute("gameForm", gameForm);
 		return "mainGame";
 	}
