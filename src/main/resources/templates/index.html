@@ -8,6 +8,9 @@
     <body>
         <div th:fragment="logout" class="logout" sec:authorize="isAuthenticated()">		
             <h3 th:inline = "text">Hello [[${#httpServletRequest.remoteUser}]]!</h3>
+            Roles: <span sec:authentication="principal.authorities"></span>		
+            <div sec:authorize="hasRole('USER')">Text visible to user.</div>
+    		<div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>		
             <div>
                 <form action="#" th:action="@{/logout}" method="post">					
                     <input type="submit" value="Logout" />
@@ -16,7 +19,7 @@
         </div>
         <h1>Managerment Page for Admin</h1>
         <ul>
-            <li><a href="/personList" th:href="@{/personList}">User List Page</a></li>
+            <li><a href="admin/personList" th:href="@{admin/personList}">User List Page</a></li>
             <li><a href="/gameLobby" th:href="@{/gameLobby}">Playe Game</a></li>
         </ul>
     </body>
