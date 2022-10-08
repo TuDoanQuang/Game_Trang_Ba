@@ -435,6 +435,11 @@ public class MainGameController {
 		return redirectToMainGame;
 	}
 	
+	@RequestMapping(value = { "/gameLobby" }, method = RequestMethod.GET)
+	public String gameLobby(Model model) {
+		return "gameLobby";
+	}
+	
 	public GameForm getGameForm() {
 		return gameForm;
 	}

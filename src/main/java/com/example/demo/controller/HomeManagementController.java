@@ -14,7 +14,7 @@ import com.example.demo.form.PersonForm;
 import com.example.demo.model.Person;
 
 @Controller
-public class MainController {
+public class HomeManagementController {
 
 	private static List<Person> persons = new ArrayList<Person>();
 
@@ -36,6 +36,11 @@ public class MainController {
 		model.addAttribute("message", message);
 
 		return "index";
+	}
+	
+	@RequestMapping(value = {"/login" }, method = RequestMethod.GET)
+	public String login(Model model) {
+		return "login";
 	}
 
 	@RequestMapping(value = { "/personList" }, method = RequestMethod.GET)
