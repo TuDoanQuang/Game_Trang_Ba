@@ -1,11 +1,15 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-   <head>
-      <meta charset="UTF-8" />
-      <title>Main</title>
-      <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
-   </head>
-   <body>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <title>Spring Security Example </title>
+    <div th:replace="fragments/header :: header-css"/>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
    
    <script th:inline="javascript">
    		var gameStatus = [[${gameForm.gameStatus}]];
@@ -262,5 +266,9 @@
 	         </style>
          </form>
       </div>
-   </body>
+</div>
+
+<div th:replace="fragments/footer :: footer"/>
+
+</body>
 </html>

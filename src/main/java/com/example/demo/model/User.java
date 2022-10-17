@@ -8,30 +8,39 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import com.example.demo.enums.PersonStatus;
 
 @Entity
-@Table
+@Table(name = "User")
 public class User{
 	@Id  
-	@Column
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "id")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	private Integer id;
 	
-	@Column
+	@Column(name = "userName")
+	@NotBlank(message = "Name is mandatory")
+	@Size(min = 5, max = 30, message = "Size must be between 5 and 30")
 	private String userName;
 	
-	@Column
+	@Column(name = "email")
+	@NotBlank(message = "Email is mandatory")
+	@Email
 	private String email;
 	
-	@Column
+	@Column(name = "password")
+	@NotBlank(message = "Password is mandatory")
+	@Size(min = 2)
 	private String password;
 	
-	@Column
+	@Column(name = "status")
 	private PersonStatus status;
 	
-	@Column
+	@Column(name = "startDate")
 	private Date startDate;
 
 	public Integer getId() {
@@ -81,6 +90,4 @@ public class User{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
 }

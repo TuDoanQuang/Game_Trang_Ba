@@ -1,12 +1,18 @@
 package com.example.demo.controller;
 
 import java.util.Date;
-import java.util.Random;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -20,63 +26,66 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepository;
 	
-	@GetMapping(value = {"/user/info" })
+	@GetMapping(value = {"/user_info" })
 	public String index(Model model) {
 
 		return "/user/info";
 	}
 	
-//	 @PostMapping(path="/addUser") // Map ONLY POST Requests
-//	  public @ResponseBody String addNewUser (@RequestParam String name
-//	      , @RequestParam String email, @RequestParam String password) {
-//
-//	    User newUser = new User();
-//	    newUser.setUserName(name);
-//	    newUser.setEmail(email);
-//	    newUser.setPassword(email);
-//	    newUser.setStartDate(new Date());
-//	    newUser.setStatus(PersonStatus.ACTIVE);
-//	    userRepository.save(newUser);
-//	    
-//	    model.addAttribute("users", userRepository.findAll());
-//	    return "Saved";
-//	  }
-	
-	@GetMapping("/user/register")
+	@GetMapping("/register")
 	public String showRegistrationForm(Model model) {
 	    model.addAttribute("user", new User());
 	     
 	    return "/user/register_form";
 	}
 
-//	  @GetMapping(path="/admin/userList")
-//	  public @ResponseBody Iterable<User> getAllUsers() {
-//	    // This returns a JSON or XML with the users
-//	    return userRepository.findAll();
-//	    
-//		return "/admin/personList";
-//	  }
-	
-	@PostMapping("/user/process_register")
-	public String processRegister(User user) {
-	    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	    String encodedPassword = passwordEncoder.encode(user.getPassword());
-	    user.setPassword(encodedPassword);
-	    Random ran = new Random();
-	    int x = ran.nextInt(10);
-	    user.setId(x);
-	    user.setStartDate(new Date());
-	    user.setStatus(PersonStatus.ACTIVE);
-	    userRepository.save(user);
+	@PostMapping("/process_register")
+	public String processRegister(@Valid User user, BindingResult bindingResult) {
 	     
-	    return "/user/register_success";
+	    if (bindingResult.hasErrors()) {       
+	        return "/user/register_form";
+	    } else {
+	    	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	 	    String encodedPassword = passwordEncoder.encode(user.getPassword());
+	 	    user.setPassword(encodedPassword);
+	 	    user.setStartDate(new Date());
+	 	    user.setStatus(PersonStatus.ACTIVE);
+	 	    userRepository.save(user);
+	 	     
+	 	    return "/user/register_success";
+	    }
 	}
 	  
-	@GetMapping(path="/admin/userList")
+	@GetMapping(path="/userList")
 	public String personList(Model model) {
 
 		model.addAttribute("users", userRepository.findAll());
 
 		return "/admin/userList";
+	}
+	
+//	public void addUser(@RequestParam Map<String, String> body) {
+//	      User user = new User(); user.setUsername(body.get("username")); 
+//	      user.setPassword(passwordEncoder.encode(body.get("password"))); 
+//	      user.setAccountNonLocked(true); userDetailsManager.createUser(user); 
+//	   }
+	
+	@GetMapping("/login") 
+	public String login(HttpServletRequest request, HttpSession session) {
+		session.setAttribute("error", getErrorMessage(request, "SPRING_SECURITY_LAST_EXCEPTION"));
+		return "login";
+	} 
+	
+	private String getErrorMessage(HttpServletRequest request, String key) {
+		Exception exception = (Exception) request.getSession().getAttribute(key);
+		String error = "";
+		if (exception instanceof BadCredentialsException) {
+			error = "Invalid username and password!";
+		} else if (exception instanceof LockedException) {
+			error = exception.getMessage();
+		} else {
+			error = "Invalid username and password!";
+		}
+		return error;
 	}
 }
