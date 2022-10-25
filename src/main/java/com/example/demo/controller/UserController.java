@@ -25,7 +25,7 @@ public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+	//private static Logger logger = LoggerFactory.getLogger(UserController.class);
 	@GetMapping(value = {"/user_info" })
 	public String index(Model model) {
 
@@ -35,7 +35,6 @@ public class UserController {
 	@GetMapping("/register")
 	public String showRegistrationForm(Model model) {
 	    model.addAttribute("user", new User());
-	     
 	    return "/user/register_form";
 	}
 
