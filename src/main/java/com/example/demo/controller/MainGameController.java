@@ -57,15 +57,15 @@ public class MainGameController {
 				
 				
 			} else {// Moving part
-				List<PointName> validPointsCanMove = new ArrayList<>();
+				List<PointName> validPointsMoveable = new ArrayList<>();
 				this.gameForm.getPointMap().forEach((k, v) -> {
-					if (PointStatus.PLAYER2.name().equals(v)) {
-						validPointsCanMove.add(k);
+					if (PointStatus.PLAYER2.name().equals(v) && GameUtils.getPointsCanMoveOn(gameForm, k.name()).size() > 0) {
+						validPointsMoveable.add(k);
 					}
 				});
 				
-				if (validPointsCanMove.size() > 0) {
-					PointName robotPointSelection = validPointsCanMove.get(getRandompoint(validPointsCanMove.size()));
+				if (validPointsMoveable.size() > 0) {
+					PointName robotPointSelection = validPointsMoveable.get(getRandompoint(validPointsMoveable.size()));
 					System.out.println("Point wait to move: " + robotPointSelection);
 					excuteGame(model, robotPointSelection.name());
 				}
