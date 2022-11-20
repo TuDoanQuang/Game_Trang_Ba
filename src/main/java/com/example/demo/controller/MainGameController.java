@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -307,133 +308,140 @@ public class MainGameController {
 		model.addAttribute("gameForm", gameForm);
 		return "mainGame";
 	}
+	
+	@RequestMapping(value = { "/playGame" }, method = RequestMethod.GET)
+	public ResponseEntity<GameForm> selectPoint(@RequestParam String point, Model model) {
+		excuteGame(model, point);
+		
+		return ResponseEntity.ok(this.gameForm);
+	}
 
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a1")
-	public String selectPointA1(@RequestParam String a1, Model model) {
-		excuteGame(model, a1);
-		return redirectToMainGame;
-	}
-	
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a2")
-	public String selectPointA2(@RequestParam String a2, Model model) {
-		excuteGame(model, a2);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a3")
-	public String selectPointA3(@RequestParam String a3, Model model) {
-		excuteGame(model, a3);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a4")
-	public String selectPointA4(@RequestParam String a4, Model model) {
-		excuteGame(model, a4);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a5")
-	public String selectPointA5(@RequestParam String a5, Model model) {
-		excuteGame(model, a5);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a6")
-	public String selectPointA6(@RequestParam String a6, Model model) {
-		excuteGame(model, a6);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a7")
-	public String selectPointA7(@RequestParam String a7, Model model) {
-		excuteGame(model, a7);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a8")
-	public String selectPointA8(@RequestParam String a8, Model model) {
-		excuteGame(model, a8);
-		return redirectToMainGame;
-	}
-//	===========================================================B area
-	
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b1")
-	public String selectPointB1(@RequestParam String b1, Model model) {
-		excuteGame(model, b1);
-		return redirectToMainGame;
-	}
-	
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b2")
-	public String selectPointB2(@RequestParam String b2, Model model) {
-		excuteGame(model, b2);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b3")
-	public String selectPointB3(@RequestParam String b3, Model model) {
-		excuteGame(model, b3);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b4")
-	public String selectPointB4(@RequestParam String b4, Model model) {
-		excuteGame(model, b4);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b5")
-	public String selectPointB5(@RequestParam String b5, Model model) {
-		excuteGame(model, b5);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b6")
-	public String selectPointB6(@RequestParam String b6, Model model) {
-		excuteGame(model, b6);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b7")
-	public String selectPointB7(@RequestParam String b7, Model model) {
-		excuteGame(model, b7);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b8")
-	public String selectPointB8(@RequestParam String b8, Model model) {
-		excuteGame(model, b8);
-		return redirectToMainGame;
-	}
-//	===========================================================C area
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c1")
-	public String selectPointC1(@RequestParam String c1, Model model) {
-		excuteGame(model, c1);
-		return redirectToMainGame;
-	}
-	
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c2")
-	public String selectPointC2(@RequestParam String c2, Model model) {
-		excuteGame(model, c2);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c3")
-	public String selectPointC3(@RequestParam String c3, Model model) {
-		excuteGame(model, c3);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c4")
-	public String selectPointC4(@RequestParam String c4, Model model) {
-		excuteGame(model, c4);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c5")
-	public String selectPointC5(@RequestParam String c5, Model model) {
-		excuteGame(model, c5);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c6")
-	public String selectPointC6(@RequestParam String c6, Model model) {
-		excuteGame(model, c6);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c7")
-	public String selectPointC7(@RequestParam String c7, Model model) {
-		excuteGame(model, c7);
-		return redirectToMainGame;
-	}
-	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c8")
-	public String selectPointC8(@RequestParam String c8, Model model) {
-		excuteGame(model, c8);
-		return redirectToMainGame;
-	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a1")
+//	public String selectPointA1(@RequestParam String a1, Model model) {
+//		excuteGame(model, a1);
+//		return redirectToMainGame;
+//	}
+//	
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a2")
+//	public String selectPointA2(@RequestParam String a2, Model model) {
+//		excuteGame(model, a2);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a3")
+//	public String selectPointA3(@RequestParam String a3, Model model) {
+//		excuteGame(model, a3);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a4")
+//	public String selectPointA4(@RequestParam String a4, Model model) {
+//		excuteGame(model, a4);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a5")
+//	public String selectPointA5(@RequestParam String a5, Model model) {
+//		excuteGame(model, a5);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a6")
+//	public String selectPointA6(@RequestParam String a6, Model model) {
+//		excuteGame(model, a6);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a7")
+//	public String selectPointA7(@RequestParam String a7, Model model) {
+//		excuteGame(model, a7);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "a8")
+//	public String selectPointA8(@RequestParam String a8, Model model) {
+//		excuteGame(model, a8);
+//		return redirectToMainGame;
+//	}
+////	===========================================================B area
+//	
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b1")
+//	public String selectPointB1(@RequestParam String b1, Model model) {
+//		excuteGame(model, b1);
+//		return redirectToMainGame;
+//	}
+//	
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b2")
+//	public String selectPointB2(@RequestParam String b2, Model model) {
+//		excuteGame(model, b2);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b3")
+//	public String selectPointB3(@RequestParam String b3, Model model) {
+//		excuteGame(model, b3);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b4")
+//	public String selectPointB4(@RequestParam String b4, Model model) {
+//		excuteGame(model, b4);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b5")
+//	public String selectPointB5(@RequestParam String b5, Model model) {
+//		excuteGame(model, b5);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b6")
+//	public String selectPointB6(@RequestParam String b6, Model model) {
+//		excuteGame(model, b6);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b7")
+//	public String selectPointB7(@RequestParam String b7, Model model) {
+//		excuteGame(model, b7);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "b8")
+//	public String selectPointB8(@RequestParam String b8, Model model) {
+//		excuteGame(model, b8);
+//		return redirectToMainGame;
+//	}
+////	===========================================================C area
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c1")
+//	public String selectPointC1(@RequestParam String c1, Model model) {
+//		excuteGame(model, c1);
+//		return redirectToMainGame;
+//	}
+//	
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c2")
+//	public String selectPointC2(@RequestParam String c2, Model model) {
+//		excuteGame(model, c2);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c3")
+//	public String selectPointC3(@RequestParam String c3, Model model) {
+//		excuteGame(model, c3);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c4")
+//	public String selectPointC4(@RequestParam String c4, Model model) {
+//		excuteGame(model, c4);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c5")
+//	public String selectPointC5(@RequestParam String c5, Model model) {
+//		excuteGame(model, c5);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c6")
+//	public String selectPointC6(@RequestParam String c6, Model model) {
+//		excuteGame(model, c6);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c7")
+//	public String selectPointC7(@RequestParam String c7, Model model) {
+//		excuteGame(model, c7);
+//		return redirectToMainGame;
+//	}
+//	@RequestMapping(value = { "/mainGame" }, method = RequestMethod.POST, params = "c8")
+//	public String selectPointC8(@RequestParam String c8, Model model) {
+//		excuteGame(model, c8);
+//		return redirectToMainGame;
+//	}
 	
 	@RequestMapping(value = { "/gameLobby" }, method = RequestMethod.GET)
 	public String gameLobby(Model model) {

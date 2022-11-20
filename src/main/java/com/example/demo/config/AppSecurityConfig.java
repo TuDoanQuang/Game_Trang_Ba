@@ -29,8 +29,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
 		logger.warn("reload security configs");
 		http.authorizeRequests()
-				.antMatchers("/webjars/**", "/css/**", "/fonts/**", "/libs/**"
-						, "/", "/gameLobby", "/error/**", "/register", "/process_register").permitAll()
+				.antMatchers("/webjars/**", "/css/**", "/fonts/**", "/libs/**", "/js/**"
+						, "/", "/gameLobby", "/error/**", "/register", "/process_register"
+						, "/mainGame", "/mainGame/**", "/mainGame?**", "/playGame").permitAll()
 				.antMatchers("/admin", "/admin/**", "/userList").hasAnyAuthority(Role.ADMIN.name())	
 				.antMatchers("/user/**").hasAnyAuthority(Role.USER.name())	
 				.anyRequest().authenticated()			

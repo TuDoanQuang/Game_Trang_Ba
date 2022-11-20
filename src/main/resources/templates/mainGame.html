@@ -24,7 +24,8 @@
    </script>
    	<a th:href="@{/mainGame?mode=} + ${gameForm.mode.value}">Chơi lại</a>
       <div>
-        <form th:action="@{/mainGame}" method="POST">
+      <div id="feedback">test</div>
+        <form th:action="@{/playGame}" method="GET" id="game-form">
         	<table border="1" class="center" style="margin-bottom: 50px;">
         		<tr>
         			<th bgcolor="red">Player 1 - Quân đỏ</th>
@@ -51,7 +52,7 @@
 	         <table border="0" class="center">
 				<tr>
 					<td>
-						<input type="submit" value="A1" name="a1"
+						<input type="submit" value="A1" name="point"
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A1])}">
 					</td></td>
 					<td>-------</td>
@@ -61,7 +62,7 @@
 					<td>-------</td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="A2" name="a2" 
+						<input type="submit" value="A2" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A2])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
@@ -70,7 +71,7 @@
 					<td>-------</td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="A3" name="a3" 
+						<input type="submit" value="A3" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A3])}"/></td>
 				</tr>
 				<tr style="height: 30px">
@@ -82,20 +83,20 @@
 				<tr>
 					<td colspan="3">l</td>
 					<td>
-						<input type="submit" value="B1" name="b1" 
+						<input type="submit" value="B1" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B1])}"/>
 					</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="B2" name="b2" 
+						<input type="submit" value="B2" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B2])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="B3" name="b3" 
+						<input type="submit" value="B3" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B3])}"/></td>
 					<td colspan="2"></td>
 					<td>l</td>
@@ -112,15 +113,15 @@
 					<td colspan="3">l</td>
 					<td colspan="2">l</td>
 					<td>
-						<input type="submit" value="C1" name="c1" 
+						<input type="submit" value="C1" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C1])}"/></td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="C2" name="c2" 
+						<input type="submit" value="C2" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C2])}"/></td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="C3" name="c3" 
+						<input type="submit" value="C3" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C3])}"/></td>
 					<td colspan="1"></td>
 					<td colspan="3">l</td>
@@ -136,29 +137,29 @@
 				</tr>
 				<tr>
 					<td>
-						<input type="submit" value="A8" name="a8" 
+						<input type="submit" value="A8" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A8])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="B8" name="b8" 
+						<input type="submit" value="B8" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B8])}"/></td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="C8" name="c8" 
+						<input type="submit" value="C8" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C8])}"/></td>
 					<td colspan="3"></td>
 					<td>
-						<input type="submit" value="C4" name="c4" 
+						<input type="submit" value="C4" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C4])}"/></td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="B4" name="b4" 
+						<input type="submit" value="B4" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B4])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="A4" name="a4" 
+						<input type="submit" value="A4" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A4])}"/></td>
 				</tr>
 				<tr style="height: 30px">
@@ -173,14 +174,14 @@
 					<td colspan="3">l</td>
 					<td colspan="2">l</td>
 					<td>
-						<input type="submit" value="C7" name="c7" 
+						<input type="submit" value="C7" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C7])}"/></td>
 					<td>-------</td>
 					<td>
-						<input type="submit" value="C6" name="c6" 
+						<input type="submit" value="C6" name="point" 
 						th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C6])}"/></td>
 					<td>-------</td>
-					<td><input type="submit" value="C5" name="c5" 
+					<td><input type="submit" value="C5" name="point" 
 					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[C5])}"/></td>
 					<td colspan="1"></td>
 					<td colspan="3">l</td>
@@ -196,17 +197,17 @@
 				</tr>
 				<tr>
 					<td colspan="3">l</td>
-					<td><input type="submit" value="B7" name="b7" 
+					<td><input type="submit" value="B7" name="point" 
 					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B7])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
-					<td><input type="submit" value="B6" name="b6" 
+					<td><input type="submit" value="B6" name="point" 
 					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B6])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
-					<td><input type="submit" value="B5" name="b5" 
+					<td><input type="submit" value="B5" name="point" 
 					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[B5])}"/></td>
 					<td colspan="2"></td>
 					<td>l</td>
@@ -218,7 +219,7 @@
 					<td>l</td>
 				</tr>
 				<tr>
-					<td><input type="submit" value="A7" name="a7"
+					<td><input type="submit" value="A7" name="point"
 					 th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A7])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
@@ -226,7 +227,7 @@
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
-					<td><input type="submit" value="A6" name="a6" 
+					<td><input type="submit" value="A6" name="point" 
 					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A6])}"/></td>
 					<td>-------</td>
 					<td>-------</td>
@@ -234,7 +235,7 @@
 					<td>-------</td>
 					<td>-------</td>
 					<td>-------</td>
-					<td><input type="submit" value="A5" name="a5" 
+					<td><input type="submit" value="A5" name="point" 
 					th:class="${gameForm.getColorClassPoint(gameForm.pointMap[A5])}"/></td>
 				</tr>
 	         </table>
@@ -267,7 +268,10 @@
          </form>
       </div>
 </div>
+<script type="text/javascript"
+        src="webjars/jquery/2.2.4/jquery.min.js"></script>
 
+<script type="text/javascript" src="js/main.js"></script>
 <div th:replace="fragments/footer :: footer"/>
 
 </body>
